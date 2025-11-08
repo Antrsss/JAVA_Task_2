@@ -7,7 +7,8 @@ public class LexemeParser extends AbstractParser {
 
   private static final String LEXEME_DELIMITER = "\\s+";
 
-  public LexemeParser(SymbolParser nextParser) {
+  //Word or Symbol parser - depending on task
+  public LexemeParser(AbstractParser nextParser) {
     this.nextParser = nextParser;
   }
 
@@ -18,6 +19,7 @@ public class LexemeParser extends AbstractParser {
     for (var lexeme : lexemeArray) {
       TextComposite lexemeComposite = new TextComposite(TextComponentType.LEXEME);
       parentComposite.addComponent(lexemeComposite);
+
       nextParser.parse(lexeme, lexemeComposite);
     }
   }

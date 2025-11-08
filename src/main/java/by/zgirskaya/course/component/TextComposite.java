@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 public class TextComposite extends AbstractTextComponent {
 
+  private static final String PARAGRAPH = "\t";
+  private static final String SPACE = " ";
+
   private final ArrayList<AbstractTextComponent> components = new ArrayList<>();
 
   public TextComposite(TextComponentType type) {
@@ -19,7 +22,16 @@ public class TextComposite extends AbstractTextComponent {
     StringBuilder sb = new StringBuilder();
 
     for (AbstractTextComponent component : components) {
-      sb.append(component.toString());
+
+      if (component.type == TextComponentType.PARAGRAPH) {
+        sb.append(PARAGRAPH);
+      }
+
+      sb.append(component);
+
+      if (component.type == TextComponentType.LEXEME) {
+        sb.append(SPACE);
+      }
     }
 
     return sb.toString();

@@ -10,7 +10,7 @@ public class SymbolParser extends AbstractParser {
   public void parse(String lexeme, TextComposite parentComposite) {
     for (int i = 0; i < lexeme.length(); i++) {
       char character = lexeme.charAt(i);
-      TextLeaf letterComponent = new TextLeaf(character, TextComponentType.LETTER);
+      TextLeaf letterComponent = new TextLeaf(character, TextComponentType.SYMBOL);
       parentComposite.addComponent(letterComponent);
     }
   }
