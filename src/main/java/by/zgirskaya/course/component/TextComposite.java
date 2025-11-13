@@ -1,6 +1,7 @@
 package by.zgirskaya.course.component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TextComposite extends AbstractTextComponent {
 
@@ -16,6 +17,8 @@ public class TextComposite extends AbstractTextComponent {
   public void addComponent(AbstractTextComponent component) {
     components.add(component);
   }
+
+  public ArrayList<AbstractTextComponent> getChildren() { return new ArrayList<>(components); }
 
   @Override
   public String toString() {
