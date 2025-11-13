@@ -17,7 +17,7 @@ public class SentenceParser extends AbstractParser {
 
     for (var sentence : sentenceArray) {
       TextComposite sentenceComposite = new TextComposite(TextComponentType.SENTENCE);
-      parentComposite.addComponent(sentenceComposite);
+      parentComposite.addChild(sentenceComposite);
       nextParser.parse(sentence, sentenceComposite);
     }
   }

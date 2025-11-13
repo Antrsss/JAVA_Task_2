@@ -14,7 +14,7 @@ public class WordParser extends AbstractParser {
 
     for (var word : wordsArray) {
       TextLeaf wordComponent = new TextLeaf(word, TextComponentType.WORD);
-      parentComposite.addComponent(wordComponent);
+      parentComposite.addChild(wordComponent);
     }
   }
 }

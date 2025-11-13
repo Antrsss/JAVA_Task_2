@@ -20,7 +20,7 @@ public class ParagraphParser extends AbstractParser {
     for (var paragraph : paragraphArray) {
       paragraph = paragraph.replaceAll(TO_REPLACE_REGEX, SPACE);
       TextComposite paragraphComposite = new TextComposite(TextComponentType.PARAGRAPH);
-      parentComposite.addComponent(paragraphComposite);
+      parentComposite.addChild(paragraphComposite);
       nextParser.parse(paragraph, paragraphComposite);
     }
   }

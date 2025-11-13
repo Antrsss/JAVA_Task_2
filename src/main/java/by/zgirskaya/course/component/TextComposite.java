@@ -1,40 +1,54 @@
 package by.zgirskaya.course.component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 public class TextComposite extends AbstractTextComponent {
 
   private static final String PARAGRAPH = "\t";
   private static final String SPACE = " ";
 
-  private final ArrayList<AbstractTextComponent> components = new ArrayList<>();
+  private ArrayList<AbstractTextComponent> components = new ArrayList<>();
 
   public TextComposite(TextComponentType type) {
     this.setComponentType(type);
   }
 
-  public void addComponent(AbstractTextComponent component) {
+  public List<AbstractTextComponent> getChildren() { return new ArrayList<>(components); }
+
+  public void setChildren(List<AbstractTextComponent> components) {
+    this.components = new ArrayList<>(components);
+  }
+
+  public void addChild(AbstractTextComponent component) {
     components.add(component);
   }
 
-  public ArrayList<AbstractTextComponent> getChildren() { return new ArrayList<>(components); }
+  @Override
+  public TextComposite makeCopy() {
+    TextComposite copy = new TextComposite(this.getComponentType());
+
+    for (AbstractTextComponent child : components) {
+      copy.addChild(child.makeCopy());
+    }
+
+    return copy;
+  }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
 
+    if (this.getComponentType() == TextComponentType.PARAGRAPH) {
+      sb.append(PARAGRAPH);
+    }
+
     for (AbstractTextComponent component : components) {
-
-      if (component.getComponentType() == TextComponentType.PARAGRAPH) {
-        sb.append(PARAGRAPH);
-      }
-
       sb.append(component);
+    }
 
-      if (component.getComponentType() == TextComponentType.LEXEME) {
-        sb.append(SPACE);
-      }
+    if (this.getComponentType() == TextComponentType.LEXEME) {
+      sb.append(SPACE);
     }
 
     return sb.toString();

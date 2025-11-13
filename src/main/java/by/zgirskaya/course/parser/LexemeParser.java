@@ -14,11 +14,12 @@ public class LexemeParser extends AbstractParser {
 
   @Override
   public void parse(String sentence, TextComposite parentComposite) {
-    String[] lexemeArray = sentence.split(LEXEME_DELIMITER);
+    String trimmedSentence = sentence.trim();
+    String[] lexemeArray = trimmedSentence.split(LEXEME_DELIMITER);
 
     for (var lexeme : lexemeArray) {
       TextComposite lexemeComposite = new TextComposite(TextComponentType.LEXEME);
-      parentComposite.addComponent(lexemeComposite);
+      parentComposite.addChild(lexemeComposite);
 
       nextParser.parse(lexeme, lexemeComposite);
     }

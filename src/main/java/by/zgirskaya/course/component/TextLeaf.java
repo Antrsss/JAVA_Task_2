@@ -10,5 +10,10 @@ public class TextLeaf extends AbstractTextComponent {
   }
 
   @Override
+  public TextLeaf makeCopy() {
+    return new TextLeaf(this.text, getComponentType());
+  }
+
+  @Override
   public String toString() { return this.text; }
 }

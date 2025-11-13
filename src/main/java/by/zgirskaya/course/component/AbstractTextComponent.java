@@ -11,5 +11,6 @@ public abstract class AbstractTextComponent {
     this.type = type;
   }
 
+  public abstract AbstractTextComponent makeCopy();
   public abstract String toString();
 }
