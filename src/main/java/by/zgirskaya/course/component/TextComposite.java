@@ -10,7 +10,7 @@ public class TextComposite extends AbstractTextComponent {
   private final ArrayList<AbstractTextComponent> components = new ArrayList<>();
 
   public TextComposite(TextComponentType type) {
-    this.type = type;
+    this.setComponentType(type);
   }
 
   public void addComponent(AbstractTextComponent component) {
@@ -23,13 +23,13 @@ public class TextComposite extends AbstractTextComponent {
 
     for (AbstractTextComponent component : components) {
 
-      if (component.type == TextComponentType.PARAGRAPH) {
+      if (component.getComponentType() == TextComponentType.PARAGRAPH) {
         sb.append(PARAGRAPH);
       }
 
       sb.append(component);
 
-      if (component.type == TextComponentType.LEXEME) {
+      if (component.getComponentType() == TextComponentType.LEXEME) {
         sb.append(SPACE);
       }
     }

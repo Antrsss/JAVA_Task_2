@@ -2,7 +2,7 @@ package by.zgirskaya.course.component;
 
 public abstract class AbstractTextComponent {
 
-  protected TextComponentType type;
+  private TextComponentType type;
 
   public TextComponentType getComponentType() {
     return this.type;

@@ -2,13 +2,13 @@ package by.zgirskaya.course.component;
 
 public class TextLeaf extends AbstractTextComponent {
 
-  private char text;
+  private String text;
 
-  public TextLeaf(char text, TextComponentType type) {
+  public TextLeaf(String text, TextComponentType type) {
     this.text = text;
-    this.type = type;
+    this.setComponentType(type);
   }
 
   @Override
-  public String toString() { return String.valueOf(this.text); }
+  public String toString() { return this.text; }
 }
