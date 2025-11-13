@@ -4,6 +4,7 @@ import by.zgirskaya.course.component.AbstractTextComponent;
 import by.zgirskaya.course.component.TextComponentType;
 import by.zgirskaya.course.component.TextComposite;
 import by.zgirskaya.course.component.TextLeaf;
+import by.zgirskaya.course.exception.CustomTextException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -20,7 +21,7 @@ class ParserTest {
 
     parser.parse(lexeme, parent);
 
-    List<AbstractTextComponent> children = parent.getChildren();
+    List<AbstractTextComponent> children = parent.getChildComponents();
     assertEquals(3, children.size());
 
     assertEquals(TextComponentType.SYMBOL, children.get(0).getComponentType());
@@ -41,7 +42,7 @@ class ParserTest {
 
     parser.parse(lexeme, parent);
 
-    assertTrue(parent.getChildren().isEmpty());
+    assertTrue(parent.getChildComponents().isEmpty());
   }
 
   @Test
@@ -52,7 +53,7 @@ class ParserTest {
 
     parser.parse(lexeme, parent);
 
-    List<AbstractTextComponent> children = parent.getChildren();
+    List<AbstractTextComponent> children = parent.getChildComponents();
     assertEquals(3, children.size());
 
     assertEquals(TextComponentType.WORD, children.get(0).getComponentType());
@@ -73,11 +74,11 @@ class ParserTest {
 
     parser.parse(lexeme, parent);
 
-    assertTrue(parent.getChildren().isEmpty());
+    assertTrue(parent.getChildComponents().isEmpty());
   }
 
   @Test
-  void testLexemeParser() {
+  void testLexemeParser() throws CustomTextException {
     SymbolParser symbolParser = new SymbolParser();
     LexemeParser lexemeParser = new LexemeParser(symbolParser);
     TextComposite parent = new TextComposite(TextComponentType.SENTENCE);
@@ -85,18 +86,18 @@ class ParserTest {
 
     lexemeParser.parse(sentence, parent);
 
-    List<AbstractTextComponent> children = parent.getChildren();
+    List<AbstractTextComponent> children = parent.getChildComponents();
     assertEquals(2, children.size());
 
     assertEquals(TextComponentType.LEXEME, children.get(0).getComponentType());
     assertEquals(TextComponentType.LEXEME, children.get(1).getComponentType());
 
     TextComposite firstLexeme = (TextComposite) children.get(0);
-    assertEquals(5, firstLexeme.getChildren().size()); // "hello" has 5 symbols
+    assertEquals(5, firstLexeme.getChildComponents().size()); // "hello" has 5 symbols
   }
 
   @Test
-  void testLexemeParserWithMultipleSpaces() {
+  void testLexemeParserWithMultipleSpaces() throws CustomTextException {
     SymbolParser symbolParser = new SymbolParser();
     LexemeParser lexemeParser = new LexemeParser(symbolParser);
     TextComposite parent = new TextComposite(TextComponentType.SENTENCE);
@@ -104,12 +105,12 @@ class ParserTest {
 
     lexemeParser.parse(sentence, parent);
 
-    List<AbstractTextComponent> children = parent.getChildren();
+    List<AbstractTextComponent> children = parent.getChildComponents();
     assertEquals(2, children.size()); // Should ignore multiple spaces
   }
 
   @Test
-  void testSentenceParser() {
+  void testSentenceParser() throws CustomTextException {
     SymbolParser symbolParser = new SymbolParser();
     LexemeParser lexemeParser = new LexemeParser(symbolParser);
     SentenceParser sentenceParser = new SentenceParser(lexemeParser);
@@ -118,7 +119,7 @@ class ParserTest {
 
     sentenceParser.parse(paragraph, parent);
 
-    List<AbstractTextComponent> children = parent.getChildren();
+    List<AbstractTextComponent> children = parent.getChildComponents();
     assertEquals(3, children.size());
 
     assertEquals(TextComponentType.SENTENCE, children.get(0).getComponentType());
@@ -127,7 +128,7 @@ class ParserTest {
   }
 
   @Test
-  void testSentenceParserWithoutDelimiters() {
+  void testSentenceParserWithoutDelimiters() throws CustomTextException {
     SymbolParser symbolParser = new SymbolParser();
     LexemeParser lexemeParser = new LexemeParser(symbolParser);
     SentenceParser sentenceParser = new SentenceParser(lexemeParser);
@@ -136,13 +137,13 @@ class ParserTest {
 
     sentenceParser.parse(paragraph, parent);
 
-    List<AbstractTextComponent> children = parent.getChildren();
+    List<AbstractTextComponent> children = parent.getChildComponents();
     assertEquals(1, children.size());
     assertEquals(TextComponentType.SENTENCE, children.getFirst().getComponentType());
   }
 
   @Test
-  void testParagraphParser() {
+  void testParagraphParser() throws CustomTextException {
     SymbolParser symbolParser = new SymbolParser();
     LexemeParser lexemeParser = new LexemeParser(symbolParser);
     SentenceParser sentenceParser = new SentenceParser(lexemeParser);
@@ -153,7 +154,7 @@ class ParserTest {
 
     paragraphParser.parse(text, parent);
 
-    List<AbstractTextComponent> children = parent.getChildren();
+    List<AbstractTextComponent> children = parent.getChildComponents();
     assertEquals(3, children.size());
 
     assertEquals(TextComponentType.PARAGRAPH, children.get(0).getComponentType());
@@ -162,7 +163,7 @@ class ParserTest {
   }
 
   @Test
-  void testParagraphParserWithMultipleSpaces() {
+  void testParagraphParserWithMultipleSpaces() throws CustomTextException {
     SymbolParser symbolParser = new SymbolParser();
     LexemeParser lexemeParser = new LexemeParser(symbolParser);
     SentenceParser sentenceParser = new SentenceParser(lexemeParser);
@@ -173,12 +174,12 @@ class ParserTest {
 
     paragraphParser.parse(text, parent);
 
-    List<AbstractTextComponent> children = parent.getChildren();
+    List<AbstractTextComponent> children = parent.getChildComponents();
     assertEquals(2, children.size());
   }
 
   @Test
-  void testFullParsingChain() {
+  void testFullParsingChain() throws CustomTextException {
     SymbolParser symbolParser = new SymbolParser();
     LexemeParser lexemeParser = new LexemeParser(symbolParser);
     SentenceParser sentenceParser = new SentenceParser(lexemeParser);
@@ -189,30 +190,30 @@ class ParserTest {
 
     paragraphParser.parse(text, root);
 
-    List<AbstractTextComponent> paragraphs = root.getChildren();
+    List<AbstractTextComponent> paragraphs = root.getChildComponents();
     assertEquals(2, paragraphs.size());
 
     // First paragraph
     TextComposite firstParagraph = (TextComposite) paragraphs.get(0);
-    List<AbstractTextComponent> firstSentences = firstParagraph.getChildren();
+    List<AbstractTextComponent> firstSentences = firstParagraph.getChildComponents();
     assertEquals(1, firstSentences.size());
 
     TextComposite firstSentence = (TextComposite) firstSentences.get(0);
-    List<AbstractTextComponent> firstLexemes = firstSentence.getChildren();
+    List<AbstractTextComponent> firstLexemes = firstSentence.getChildComponents();
     assertEquals(2, firstLexemes.size()); // "Hello" and "world"
 
     // Second paragraph
     TextComposite secondParagraph = (TextComposite) paragraphs.get(1);
-    List<AbstractTextComponent> secondSentences = secondParagraph.getChildren();
+    List<AbstractTextComponent> secondSentences = secondParagraph.getChildComponents();
     assertEquals(1, secondSentences.size());
 
     TextComposite secondSentence = (TextComposite) secondSentences.get(0);
-    List<AbstractTextComponent> secondLexemes = secondSentence.getChildren();
+    List<AbstractTextComponent> secondLexemes = secondSentence.getChildComponents();
     assertEquals(3, secondLexemes.size()); // "How", "are", "you"
   }
 
   @Test
-  void testWordParserIntegration() {
+  void testWordParserIntegration() throws CustomTextException {
     WordParser wordParser = new WordParser();
     LexemeParser lexemeParser = new LexemeParser(wordParser);
     TextComposite parent = new TextComposite(TextComponentType.SENTENCE);
@@ -220,18 +221,18 @@ class ParserTest {
 
     lexemeParser.parse(sentence, parent);
 
-    List<AbstractTextComponent> lexemes = parent.getChildren();
+    List<AbstractTextComponent> lexemes = parent.getChildComponents();
     assertEquals(2, lexemes.size());
 
     TextComposite firstLexeme = (TextComposite) lexemes.getFirst();
-    List<AbstractTextComponent> firstWords = firstLexeme.getChildren();
+    List<AbstractTextComponent> firstWords = firstLexeme.getChildComponents();
     assertEquals(1, firstWords.size());
     assertEquals(TextComponentType.WORD, firstWords.getFirst().getComponentType());
     assertEquals("hello", firstWords.getFirst().toString());
   }
 
   @Test
-  void testParserChainWithWordParser() {
+  void testParserChainWithWordParser() throws CustomTextException {
     WordParser wordParser = new WordParser();
     LexemeParser lexemeParser = new LexemeParser(wordParser);
     SentenceParser sentenceParser = new SentenceParser(lexemeParser);
@@ -241,14 +242,14 @@ class ParserTest {
     String text = "Test123 sentence.    Another456 text!";
     paragraphParser.parse(text, root);
 
-    List<AbstractTextComponent> paragraphs = root.getChildren();
+    List<AbstractTextComponent> paragraphs = root.getChildComponents();
     assertEquals(2, paragraphs.size());
 
     // Verify words are extracted correctly (without numbers)
     TextComposite firstParagraph = (TextComposite) paragraphs.getFirst();
-    TextComposite firstSentence = (TextComposite) firstParagraph.getChildren().getFirst();
-    TextComposite firstLexeme = (TextComposite) firstSentence.getChildren().getFirst();
-    TextLeaf firstWord = (TextLeaf) firstLexeme.getChildren().getFirst();
+    TextComposite firstSentence = (TextComposite) firstParagraph.getChildComponents().getFirst();
+    TextComposite firstLexeme = (TextComposite) firstSentence.getChildComponents().getFirst();
+    TextLeaf firstWord = (TextLeaf) firstLexeme.getChildComponents().getFirst();
 
     assertEquals("Test", firstWord.toString());
     assertEquals(TextComponentType.WORD, firstWord.getComponentType());

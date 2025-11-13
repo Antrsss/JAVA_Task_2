@@ -5,25 +5,39 @@ import by.zgirskaya.course.component.TextComponentType;
 import by.zgirskaya.course.component.TextComposite;
 import by.zgirskaya.course.exception.CustomTextException;
 import by.zgirskaya.course.service.TextService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TextServiceImpl implements TextService {
+  private static final Logger logger = LogManager.getLogger();
 
   @Override
   public int findMaxSentenceCountWithSameWords(AbstractTextComponent textComponent) throws CustomTextException {
+    logger.info("Finding max sentence count with same words. Component type: {}",
+            textComponent.getComponentType());
+
     if (textComponent.getComponentType() != TextComponentType.PARAGRAPH &&
             textComponent.getComponentType() != TextComponentType.SENTENCE) {
       throw new CustomTextException("Component must be paragraph or sentence type");
     }
 
     List<Set<String>> sentencesWords = collectAllSentencesWords(textComponent);
-    return findMaxSentencesWithSameWords(sentencesWords);
+    int result = findMaxSentencesWithSameWords(sentencesWords);
+
+    logger.info("Max sentence count with same words: {}", result);
+
+    return result;
+
   }
 
   @Override
   public void displaySentencesByLexemeCountAscending(AbstractTextComponent textComponent) throws CustomTextException {
+    logger.info("Displaying sentences by lexeme count ascending. Component type: {}",
+            textComponent.getComponentType());
+
     if (textComponent.getComponentType() != TextComponentType.PARAGRAPH &&
             textComponent.getComponentType() != TextComponentType.SENTENCE) {
       throw new CustomTextException("Component must be paragraph or sentence type");
@@ -36,18 +50,26 @@ public class TextServiceImpl implements TextService {
     for (SentenceInfo info : sentencesInfo) {
       System.out.println("Lexemes count: " + info.lexemeCount() + " -> " + info.sentenceText());
     }
+
+    logger.info("Displayed {} sentences sorted by lexeme count", sentencesInfo.size());
   }
 
   @Override
   public AbstractTextComponent changeFirstAndLastLexemesInSentences(AbstractTextComponent textComponent) throws CustomTextException {
+    logger.info("Changing first and last lexemes in sentences. Component type: {}",
+            textComponent.getComponentType());
+
     if (textComponent.getComponentType() != TextComponentType.PARAGRAPH &&
             textComponent.getComponentType() != TextComponentType.SENTENCE) {
       throw new CustomTextException("Component must be paragraph or sentence type");
     }
 
-    // Создаем копию и меняем лексемы в ней
     TextComposite copy = (TextComposite) textComponent.makeCopy();
+    logger.debug("Created copy of component");
+
     changeLexemesInCopy(copy);
+    logger.info("Successfully changed lexemes in copy");
+
     return copy;
   }
 
@@ -57,7 +79,7 @@ public class TextServiceImpl implements TextService {
       changeFirstAndLastLexemesInSentence(copy);
     } else {
 
-      for (AbstractTextComponent child : copy.getChildren()) {
+      for (AbstractTextComponent child : copy.getChildComponents()) {
         if (child instanceof TextComposite composite) {
           changeLexemesInCopy(composite);
         }
@@ -66,7 +88,7 @@ public class TextServiceImpl implements TextService {
   }
 
   private void changeFirstAndLastLexemesInSentence(TextComposite sentence) {
-    List<AbstractTextComponent> children = sentence.getChildren();
+    List<AbstractTextComponent> children = sentence.getChildComponents();
     List<AbstractTextComponent> lexemes = new ArrayList<>();
 
     for (AbstractTextComponent child : children) {
@@ -83,7 +105,7 @@ public class TextServiceImpl implements TextService {
       if (firstIndex != -1 && lastIndex != -1) {
         List<AbstractTextComponent> newChildren = new ArrayList<>(children);
         Collections.swap(newChildren, firstIndex, lastIndex);
-        sentence.setChildren(newChildren);
+        sentence.setChildComponents(newChildren);
       }
     }
   }
@@ -103,7 +125,7 @@ public class TextServiceImpl implements TextService {
         sentencesWords.add(words);
       } else {
 
-        for (AbstractTextComponent child : composite.getChildren()) {
+        for (AbstractTextComponent child : composite.getChildComponents()) {
           collectSentencesWords(child, sentencesWords);
         }
       }
@@ -120,7 +142,7 @@ public class TextServiceImpl implements TextService {
 
     if (component instanceof TextComposite composite) {
 
-      for (AbstractTextComponent child : composite.getChildren()) {
+      for (AbstractTextComponent child : composite.getChildComponents()) {
         extractWords(child, words);
       }
     } else if (component.getComponentType() == TextComponentType.WORD) {
@@ -167,7 +189,7 @@ public class TextServiceImpl implements TextService {
         sentencesInfo.add(new SentenceInfo(sentenceText, lexemeCount));
       } else {
 
-        for (AbstractTextComponent child : composite.getChildren()) {
+        for (AbstractTextComponent child : composite.getChildComponents()) {
           collectSentencesInfo(child, sentencesInfo);
         }
       }
@@ -186,7 +208,7 @@ public class TextServiceImpl implements TextService {
         return count + 1;
       } else {
 
-        for (AbstractTextComponent child : composite.getChildren()) {
+        for (AbstractTextComponent child : composite.getChildComponents()) {
           count = countLexemes(child, count);
         }
       }

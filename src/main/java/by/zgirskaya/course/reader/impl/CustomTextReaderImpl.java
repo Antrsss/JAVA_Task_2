@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CustomTextReaderImpl implements CustomTextReader {
-
     private static final Logger logger = LogManager.getLogger();
 
     public String readTextFromFile(String filePath) throws CustomTextException {

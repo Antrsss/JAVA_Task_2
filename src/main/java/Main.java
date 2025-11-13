@@ -8,8 +8,8 @@ public class Main {
     TextComposite sentence = new TextComposite(TextComponentType.SENTENCE);
     TextLeaf word = new TextLeaf("word", TextComponentType.WORD);
 
-    sentence.addChild(word);
-    paragraph.addChild(sentence);
+    sentence.addChildComponent(word);
+    paragraph.addChildComponent(sentence);
 
     String result = paragraph.toString();
 

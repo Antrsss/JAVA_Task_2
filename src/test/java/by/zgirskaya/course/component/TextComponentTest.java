@@ -34,7 +34,7 @@ class TextComponentTest {
     TextComposite composite = new TextComposite(type);
 
     assertEquals(type, composite.getComponentType());
-    assertTrue(composite.getChildren().isEmpty());
+    assertTrue(composite.getChildComponents().isEmpty());
   }
 
   @Test
@@ -42,9 +42,9 @@ class TextComponentTest {
     TextComposite composite = new TextComposite(TextComponentType.SENTENCE);
     TextLeaf word = new TextLeaf("word", TextComponentType.WORD);
 
-    composite.addChild(word);
+    composite.addChildComponent(word);
 
-    List<AbstractTextComponent> children = composite.getChildren();
+    List<AbstractTextComponent> children = composite.getChildComponents();
     assertEquals(1, children.size());
     assertEquals(word, children.getFirst());
   }
@@ -55,17 +55,17 @@ class TextComponentTest {
     TextLeaf word1 = new TextLeaf("Hello", TextComponentType.WORD);
     TextLeaf word2 = new TextLeaf("World", TextComponentType.WORD);
 
-    sentence.addChild(word1);
-    sentence.addChild(word2);
+    sentence.addChildComponent(word1);
+    sentence.addChildComponent(word2);
 
-    assertEquals(2, sentence.getChildren().size());
+    assertEquals(2, sentence.getChildComponents().size());
   }
 
   @Test
   void testTextCompositeToStringWithLexeme() {
     TextComposite lexeme = new TextComposite(TextComponentType.LEXEME);
     TextLeaf word = new TextLeaf("test", TextComponentType.WORD);
-    lexeme.addChild(word);
+    lexeme.addChildComponent(word);
 
     String result = lexeme.toString();
 
@@ -78,8 +78,8 @@ class TextComponentTest {
     TextComposite sentence = new TextComposite(TextComponentType.SENTENCE);
     TextLeaf word = new TextLeaf("word", TextComponentType.WORD);
 
-    sentence.addChild(word);
-    paragraph.addChild(sentence);
+    sentence.addChildComponent(word);
+    paragraph.addChildComponent(sentence);
 
     String result = paragraph.toString();
 
@@ -92,8 +92,8 @@ class TextComponentTest {
     TextLeaf word1 = new TextLeaf("Hello", TextComponentType.WORD);
     TextLeaf word2 = new TextLeaf("World", TextComponentType.WORD);
 
-    sentence.addChild(word1);
-    sentence.addChild(word2);
+    sentence.addChildComponent(word1);
+    sentence.addChildComponent(word2);
 
     String result = sentence.toString();
 
@@ -110,11 +110,11 @@ class TextComponentTest {
     TextLeaf word1 = new TextLeaf("Hello", TextComponentType.WORD);
     TextLeaf word2 = new TextLeaf("World", TextComponentType.WORD);
 
-    lexeme1.addChild(word1);
-    lexeme2.addChild(word2);
-    sentence.addChild(lexeme1);
-    sentence.addChild(lexeme2);
-    paragraph.addChild(sentence);
+    lexeme1.addChildComponent(word1);
+    lexeme2.addChildComponent(word2);
+    sentence.addChildComponent(lexeme1);
+    sentence.addChildComponent(lexeme2);
+    paragraph.addChildComponent(sentence);
 
     String result = paragraph.toString();
 
@@ -125,10 +125,10 @@ class TextComponentTest {
   void testTextCompositeGetChildrenReturnsCopy() {
     TextComposite composite = new TextComposite(TextComponentType.SENTENCE);
     TextLeaf word = new TextLeaf("test", TextComponentType.WORD);
-    composite.addChild(word);
+    composite.addChildComponent(word);
 
-    List<AbstractTextComponent> children1 = composite.getChildren();
-    List<AbstractTextComponent> children2 = composite.getChildren();
+    List<AbstractTextComponent> children1 = composite.getChildComponents();
+    List<AbstractTextComponent> children2 = composite.getChildComponents();
 
     assertNotSame(children1, children2);
     assertEquals(children1, children2);
@@ -162,12 +162,12 @@ class TextComponentTest {
     TextLeaf symbol = new TextLeaf("!", TextComponentType.SYMBOL);
 
     TextComposite lexeme = new TextComposite(TextComponentType.LEXEME);
-    lexeme.addChild(word);
+    lexeme.addChildComponent(word);
 
-    composite.addChild(lexeme);
-    composite.addChild(symbol);
+    composite.addChildComponent(lexeme);
+    composite.addChildComponent(symbol);
 
-    assertEquals(2, composite.getChildren().size());
+    assertEquals(2, composite.getChildComponents().size());
     assertEquals("word !", composite.toString());
   }
 }

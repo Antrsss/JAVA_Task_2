@@ -31,8 +31,8 @@ class TextServiceImplTest {
     for (String word : words) {
       TextComposite lexeme = new TextComposite(TextComponentType.LEXEME);
       TextLeaf wordLeaf = new TextLeaf(word, TextComponentType.WORD);
-      lexeme.addChild(wordLeaf);
-      sentence.addChild(lexeme);
+      lexeme.addChildComponent(wordLeaf);
+      sentence.addChildComponent(lexeme);
     }
     return sentence;
   }
@@ -40,7 +40,7 @@ class TextServiceImplTest {
   private TextComposite createParagraph(TextComposite... sentences) {
     TextComposite paragraph = new TextComposite(TextComponentType.PARAGRAPH);
     for (TextComposite sentence : sentences) {
-      paragraph.addChild(sentence);
+      paragraph.addChildComponent(sentence);
     }
     return paragraph;
   }
@@ -53,7 +53,7 @@ class TextServiceImplTest {
     TextComposite sentence4 = createSentence("hello", "world", "test");
 
     TextComposite paragraph = createParagraph(sentence1, sentence2, sentence3, sentence4);
-    text.addChild(paragraph);
+    text.addChildComponent(paragraph);
 
     int result = textService.findMaxSentenceCountWithSameWords(text);
 
@@ -67,7 +67,7 @@ class TextServiceImplTest {
     TextComposite sentence3 = createSentence("elderberry", "fig");
 
     TextComposite paragraph = createParagraph(sentence1, sentence2, sentence3);
-    text.addChild(paragraph);
+    text.addChildComponent(paragraph);
 
     int result = textService.findMaxSentenceCountWithSameWords(text);
 
@@ -98,7 +98,7 @@ class TextServiceImplTest {
     TextComposite sentence3 = createSentence("this", "is", "longer"); // 3 lexeme
 
     TextComposite paragraph = createParagraph(sentence3, sentence1, sentence2);
-    text.addChild(paragraph);
+    text.addChildComponent(paragraph);
 
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     PrintStream originalOut = System.out;
@@ -150,7 +150,7 @@ class TextServiceImplTest {
     TextComposite sentence2 = createSentence("three", "four", "five");
     TextComposite paragraph = createParagraph(sentence1, sentence2);
     TextComposite text = new TextComposite(TextComponentType.PARAGRAPH);
-    text.addChild(paragraph);
+    text.addChildComponent(paragraph);
 
     String originalText = text.toString();
 
@@ -169,8 +169,8 @@ class TextServiceImplTest {
     TextComposite paragraph1 = createParagraph(sentence1, sentence2);
     TextComposite paragraph2 = createParagraph(sentence3);
 
-    text.addChild(paragraph1);
-    text.addChild(paragraph2);
+    text.addChildComponent(paragraph1);
+    text.addChildComponent(paragraph2);
 
     String originalSentence1 = sentence1.toString();
     String originalSentence2 = sentence2.toString();
@@ -183,16 +183,16 @@ class TextServiceImplTest {
     assertEquals(originalSentence3, sentence3.toString());
 
     TextComposite modifiedText = (TextComposite) modifiedComponent;
-    List<AbstractTextComponent> modifiedParagraphs = modifiedText.getChildren();
+    List<AbstractTextComponent> modifiedParagraphs = modifiedText.getChildComponents();
 
     TextComposite modifiedParagraph1 = (TextComposite) modifiedParagraphs.get(0);
-    List<AbstractTextComponent> modifiedSentences1 = modifiedParagraph1.getChildren();
+    List<AbstractTextComponent> modifiedSentences1 = modifiedParagraph1.getChildComponents();
 
     assertEquals("two one ", modifiedSentences1.get(0).toString()); // "one two " -> "two one "
     assertEquals("five four three ", modifiedSentences1.get(1).toString()); // "three four five " -> "five four three "
 
     TextComposite modifiedParagraph2 = (TextComposite) modifiedParagraphs.get(1);
-    List<AbstractTextComponent> modifiedSentences2 = modifiedParagraph2.getChildren();
+    List<AbstractTextComponent> modifiedSentences2 = modifiedParagraph2.getChildComponents();
     assertEquals("seven six ", modifiedSentences2.get(0).toString()); // "six seven " -> "seven six "
   }
 
@@ -216,7 +216,7 @@ class TextServiceImplTest {
     TextComposite sentence3 = createSentence("java", "and", "python");
 
     TextComposite paragraph = createParagraph(sentence1, sentence2, sentence3);
-    text.addChild(paragraph);
+    text.addChildComponent(paragraph);
 
     // Test 1: findMaxSentenceCountWithSameWords
     int maxCount = textService.findMaxSentenceCountWithSameWords(text);
@@ -232,8 +232,8 @@ class TextServiceImplTest {
 
     // copy is changed
     TextComposite modifiedText = (TextComposite) modifiedComponent;
-    TextComposite modifiedParagraph = (TextComposite) modifiedText.getChildren().get(0);
-    List<AbstractTextComponent> modifiedSentences = modifiedParagraph.getChildren();
+    TextComposite modifiedParagraph = (TextComposite) modifiedText.getChildComponents().get(0);
+    List<AbstractTextComponent> modifiedSentences = modifiedParagraph.getChildComponents();
 
     assertEquals("great is java ", modifiedSentences.get(0).toString()); // "java is great " -> "great is java "
     assertEquals("great is also python ", modifiedSentences.get(1).toString()); // "python is also great " -> "great is also python "
