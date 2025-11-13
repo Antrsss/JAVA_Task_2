@@ -4,7 +4,7 @@ import by.zgirskaya.course.component.AbstractTextComponent;
 import by.zgirskaya.course.component.TextComponentType;
 import by.zgirskaya.course.component.TextComposite;
 import by.zgirskaya.course.component.TextLeaf;
-import by.zgirskaya.course.exception.CustomTextReaderException;
+import by.zgirskaya.course.exception.CustomTextException;
 import by.zgirskaya.course.service.TextService;
 
 import java.util.*;
@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 public class TextServiceImpl implements TextService {
 
   @Override
-  public int findMaxSentenceCountWithSameWords(AbstractTextComponent textComponent) throws CustomTextReaderException {
+  public int findMaxSentenceCountWithSameWords(AbstractTextComponent textComponent) throws CustomTextException {
     if (textComponent.getComponentType() != TextComponentType.PARAGRAPH &&
             textComponent.getComponentType() != TextComponentType.SENTENCE) {
-      throw new CustomTextReaderException("Component must be paragraph or sentence type");
+      throw new CustomTextException("Component must be paragraph or sentence type");
     }
 
     List<Set<String>> sentencesWords = collectAllSentencesWords(textComponent);
@@ -25,10 +25,10 @@ public class TextServiceImpl implements TextService {
   }
 
   @Override
-  public void displaySentencesByLexemeCountAscending(AbstractTextComponent textComponent) throws CustomTextReaderException {
+  public void displaySentencesByLexemeCountAscending(AbstractTextComponent textComponent) throws CustomTextException {
     if (textComponent.getComponentType() != TextComponentType.PARAGRAPH &&
             textComponent.getComponentType() != TextComponentType.SENTENCE) {
-      throw new CustomTextReaderException("Component must be paragraph or sentence type");
+      throw new CustomTextException("Component must be paragraph or sentence type");
     }
 
     List<SentenceInfo> sentencesInfo = collectSentencesInfo(textComponent);
@@ -42,10 +42,10 @@ public class TextServiceImpl implements TextService {
   }
 
   @Override
-  public void changeFirstAndLastLexemesInSentences(AbstractTextComponent textComponent) throws CustomTextReaderException {
+  public void changeFirstAndLastLexemesInSentences(AbstractTextComponent textComponent) throws CustomTextException {
     if (textComponent.getComponentType() != TextComponentType.PARAGRAPH &&
             textComponent.getComponentType() != TextComponentType.SENTENCE) {
-      throw new CustomTextReaderException("Component must be paragraph or sentence type");
+      throw new CustomTextException("Component must be paragraph or sentence type");
     }
 
     changeLexemesInAllSentences((TextComposite) textComponent);

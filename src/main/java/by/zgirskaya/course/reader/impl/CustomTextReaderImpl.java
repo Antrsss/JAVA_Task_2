@@ -1,6 +1,6 @@
 package by.zgirskaya.course.reader.impl;
 
-import by.zgirskaya.course.exception.CustomTextReaderException;
+import by.zgirskaya.course.exception.CustomTextException;
 import by.zgirskaya.course.reader.CustomTextReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,22 +14,22 @@ public class CustomTextReaderImpl implements CustomTextReader {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public String readTextFromFile(String filePath) throws CustomTextReaderException {
+    public String readTextFromFile(String filePath) throws CustomTextException {
         logger.debug("Attempting to read file from: {}", filePath);
 
         if (filePath == null || filePath.isBlank()) {
-            throw new CustomTextReaderException("File path cannot be null or empty");
+            throw new CustomTextException("File path cannot be null or empty");
         }
 
         try {
             Path path = Paths.get(filePath);
 
             if (!Files.exists(path)) {
-                throw new CustomTextReaderException("File does not exist: " + filePath);
+                throw new CustomTextException("File does not exist: " + filePath);
             }
 
             if (!Files.isRegularFile(path)) {
-                throw new CustomTextReaderException("Path is not a file: " + filePath);
+                throw new CustomTextException("Path is not a file: " + filePath);
             }
 
             long fileSize = Files.size(path);
@@ -44,9 +44,9 @@ public class CustomTextReaderImpl implements CustomTextReader {
             return content;
 
         } catch (IOException e) {
-            throw new CustomTextReaderException("Error reading file: " + filePath, e);
+            throw new CustomTextException("Error reading file: " + filePath, e);
         } catch (Exception e) {
-            throw new CustomTextReaderException("Unexpected error while reading file: " + filePath, e);
+            throw new CustomTextException("Unexpected error while reading file: " + filePath, e);
         }
     }
 }
