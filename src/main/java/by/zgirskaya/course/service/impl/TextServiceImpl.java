@@ -25,12 +25,12 @@ public class TextServiceImpl implements TextService {
     }
 
     List<Set<String>> sentencesWords = collectAllSentencesWords(textComponent);
+    sentencesWords.removeIf(Set::isEmpty);
     int result = findMaxSentencesWithSameWords(sentencesWords);
 
     logger.info("Max sentence count with same words: {}", result);
 
     return result;
-
   }
 
   @Override
@@ -44,6 +44,7 @@ public class TextServiceImpl implements TextService {
     }
 
     List<SentenceInfo> sentencesInfo = collectSentencesInfo(textComponent);
+    sentencesInfo.removeIf(info -> info.lexemeCount() == 0 || info.sentenceText().trim().isEmpty());
     sentencesInfo.sort(Comparator.comparingInt(SentenceInfo::lexemeCount));
 
     System.out.println("Sentences in the ascending order by lexemes count:");
@@ -75,10 +76,8 @@ public class TextServiceImpl implements TextService {
 
   private void changeLexemesInCopy(TextComposite copy) {
     if (copy.getComponentType() == TextComponentType.SENTENCE) {
-
       changeFirstAndLastLexemesInSentence(copy);
     } else {
-
       for (AbstractTextComponent child : copy.getChildComponents()) {
         if (child instanceof TextComposite composite) {
           changeLexemesInCopy(composite);
@@ -89,23 +88,28 @@ public class TextServiceImpl implements TextService {
 
   private void changeFirstAndLastLexemesInSentence(TextComposite sentence) {
     List<AbstractTextComponent> children = sentence.getChildComponents();
-    List<AbstractTextComponent> lexemes = new ArrayList<>();
+    List<TextComposite> lexemes = new ArrayList<>();
 
     for (AbstractTextComponent child : children) {
       if (child instanceof TextComposite &&
               child.getComponentType() == TextComponentType.LEXEME) {
-        lexemes.add(child);
+        lexemes.add((TextComposite) child);
       }
     }
 
     if (lexemes.size() >= 2) {
-      int firstIndex = children.indexOf(lexemes.getFirst());
-      int lastIndex = children.indexOf(lexemes.getLast());
+      TextComposite firstLexeme = lexemes.getFirst();
+      TextComposite lastLexeme = lexemes.getLast();
 
-      if (firstIndex != -1 && lastIndex != -1) {
+      int firstIndex = children.indexOf(firstLexeme);
+      int lastIndex = children.indexOf(lastLexeme);
+
+      if (firstIndex != -1 && lastIndex != -1 && firstIndex != lastIndex) {
         List<AbstractTextComponent> newChildren = new ArrayList<>(children);
         Collections.swap(newChildren, firstIndex, lastIndex);
         sentence.setChildComponents(newChildren);
+
+        logger.debug("Swapped lexemes at positions {} and {}", firstIndex, lastIndex);
       }
     }
   }
@@ -118,13 +122,10 @@ public class TextServiceImpl implements TextService {
 
   private void collectSentencesWords(AbstractTextComponent component, List<Set<String>> sentencesWords) {
     if (component instanceof TextComposite composite) {
-
       if (composite.getComponentType() == TextComponentType.SENTENCE) {
-
         Set<String> words = extractWordsFromSentence(composite);
         sentencesWords.add(words);
       } else {
-
         for (AbstractTextComponent child : composite.getChildComponents()) {
           collectSentencesWords(child, sentencesWords);
         }
@@ -139,18 +140,20 @@ public class TextServiceImpl implements TextService {
   }
 
   private void extractWords(AbstractTextComponent component, Set<String> words) {
-
     if (component instanceof TextComposite composite) {
-
       for (AbstractTextComponent child : composite.getChildComponents()) {
         extractWords(child, words);
       }
     } else if (component.getComponentType() == TextComponentType.WORD) {
-      words.add(component.toString().toLowerCase());
+      String word = component.toString().toLowerCase();
+      if (!word.isEmpty()) {
+        words.add(word);
+      }
     }
   }
 
   private int findMaxSentencesWithSameWords(List<Set<String>> sentencesWords) {
+    if (sentencesWords.isEmpty()) return 0;
 
     Set<String> allWords = sentencesWords.stream()
             .flatMap(Set::stream)
@@ -158,15 +161,13 @@ public class TextServiceImpl implements TextService {
 
     int maxCount = 0;
 
-    for (var word : allWords) {
+    for (String word : allWords) {
       int currentSentenceCount = 0;
-
-      for (var sentenceWords : sentencesWords) {
+      for (Set<String> sentenceWords : sentencesWords) {
         if (sentenceWords.contains(word)) {
           currentSentenceCount++;
         }
       }
-
       maxCount = Math.max(maxCount, currentSentenceCount);
     }
 
@@ -181,14 +182,11 @@ public class TextServiceImpl implements TextService {
 
   private void collectSentencesInfo(AbstractTextComponent component, List<SentenceInfo> sentencesInfo) {
     if (component instanceof TextComposite composite) {
-
       if (composite.getComponentType() == TextComponentType.SENTENCE) {
-
         int lexemeCount = countLexemesInSentence(composite);
         String sentenceText = composite.toString().trim();
         sentencesInfo.add(new SentenceInfo(sentenceText, lexemeCount));
       } else {
-
         for (AbstractTextComponent child : composite.getChildComponents()) {
           collectSentencesInfo(child, sentencesInfo);
         }
@@ -197,20 +195,11 @@ public class TextServiceImpl implements TextService {
   }
 
   private int countLexemesInSentence(TextComposite sentence) {
-    return countLexemes(sentence, 0);
-  }
-
-  private int countLexemes(AbstractTextComponent component, int count) {
-
-    if (component instanceof TextComposite composite) {
-
-      if (composite.getComponentType() == TextComponentType.LEXEME) {
-        return count + 1;
-      } else {
-
-        for (AbstractTextComponent child : composite.getChildComponents()) {
-          count = countLexemes(child, count);
-        }
+    int count = 0;
+    for (AbstractTextComponent child : sentence.getChildComponents()) {
+      if (child instanceof TextComposite &&
+              child.getComponentType() == TextComponentType.LEXEME) {
+        count++;
       }
     }
     return count;

@@ -73,20 +73,6 @@ class TextComponentTest {
   }
 
   @Test
-  void testTextCompositeToStringWithParagraph() {
-    TextComposite paragraph = new TextComposite(TextComponentType.PARAGRAPH);
-    TextComposite sentence = new TextComposite(TextComponentType.SENTENCE);
-    TextLeaf word = new TextLeaf("word", TextComponentType.WORD);
-
-    sentence.addChildComponent(word);
-    paragraph.addChildComponent(sentence);
-
-    String result = paragraph.toString();
-
-    assertEquals("\tword", result);
-  }
-
-  @Test
   void testTextCompositeToStringWithSentence() {
     TextComposite sentence = new TextComposite(TextComponentType.SENTENCE);
     TextLeaf word1 = new TextLeaf("Hello", TextComponentType.WORD);

@@ -47,23 +47,16 @@ public class TextComposite extends AbstractTextComponent {
 
     StringBuilder sb = new StringBuilder();
 
-    if (this.getComponentType() == TextComponentType.PARAGRAPH) {
-      sb.append(PARAGRAPH);
-    }
-
     for (AbstractTextComponent component : childComponents) {
       sb.append(component);
+
+      switch (component.getComponentType()) {
+        case TextComponentType.PARAGRAPH -> sb.append(PARAGRAPH);
+        case TextComponentType.LEXEME -> sb.append(SPACE);
+      }
     }
 
-    if (this.getComponentType() == TextComponentType.LEXEME) {
-      sb.append(SPACE);
-    }
-
-    String result = sb.toString();
-    logger.debug("toString() completed. Result length: {}, Result: '{}'",
-            result.length(), result.replace("\t", "\\t").replace("\n", "\\n"));
-
-    return result;
+    return sb.toString();
   }
 
   @Override
