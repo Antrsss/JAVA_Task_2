@@ -47,9 +47,9 @@ public class TextServiceImpl implements TextService {
     sentencesInfo.removeIf(info -> info.lexemeCount() == 0 || info.sentenceText().trim().isEmpty());
     sentencesInfo.sort(Comparator.comparingInt(SentenceInfo::lexemeCount));
 
-    System.out.println("Sentences in the ascending order by lexemes count:");
+    logger.info("Sentences in the ascending order by lexemes count:");
     for (SentenceInfo info : sentencesInfo) {
-      System.out.println("Lexemes count: " + info.lexemeCount() + " -> " + info.sentenceText());
+      logger.info("Lexemes count: {} -> {}", info.lexemeCount(), info.sentenceText());
     }
 
     logger.info("Displayed {} sentences sorted by lexeme count", sentencesInfo.size());

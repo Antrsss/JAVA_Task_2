@@ -23,14 +23,14 @@ public class Main {
       String text = reader.readTextFromFile(FILE_PATH);
 
       logger.info("Successfully read text from file. Text length: {}", text.length());
-      System.out.println("=== ORIGINAL TEXT ===");
-      System.out.println(text);
-      System.out.println("=====================\n");
+      logger.info("=== ORIGINAL TEXT ===");
+      logger.info(text);
+      logger.info("=====================\n");
 
       // 2. Create TWO different parser chains for different purposes
 
       // Chain 1: For service operations (WordParser)
-      System.out.println("=== PARSING FOR SERVICE OPERATIONS (WITH WORDPARSER) ===");
+      logger.info("=== PARSING FOR SERVICE OPERATIONS (WITH WORDPARSER) ===");
       WordParser wordParser = new WordParser();
       LexemeParser lexemeParserForService = new LexemeParser(wordParser);
       SentenceParser sentenceParserForService = new SentenceParser(lexemeParserForService);
@@ -43,7 +43,7 @@ public class Main {
       displayStructureInfo(textCompositeForService, "SERVICE PARSING (WordParser)");
 
       // Chain 2: For text restoration (SymbolParser)
-      System.out.println("=== PARSING FOR TEXT RESTORATION (WITH SYMBOLPARSER) ===");
+      logger.info("=== PARSING FOR TEXT RESTORATION (WITH SYMBOLPARSER) ===");
       SymbolParser symbolParser = new SymbolParser();
       LexemeParser lexemeParserForRestoration = new LexemeParser(symbolParser);
       SentenceParser sentenceParserForRestoration = new SentenceParser(lexemeParserForRestoration);
@@ -58,60 +58,59 @@ public class Main {
       // 3. Restore text from SymbolParser-based composite
       String restoredText = textCompositeForRestoration.toString();
 
-      System.out.println("=== RESTORED TEXT ===");
-      System.out.println(restoredText);
-      System.out.println("=====================\n");
+      logger.info("=== RESTORED TEXT ===");
+      logger.info(restoredText);
+      logger.info("=====================\n");
 
       // 4. Verify that original and restored texts match
       String normalizedOriginal = text.replaceAll("\\s+", " ").trim();
       String normalizedRestored = restoredText.replaceAll("\\s+", " ").trim();
       boolean textsMatch = normalizedOriginal.equals(normalizedRestored);
 
-      System.out.println("Texts match (normalized): " + textsMatch);
-      System.out.println("Original length: " + text.length());
-      System.out.println("Restored length: " + restoredText.length());
+      logger.info("Texts match (normalized): {}", textsMatch);
+      logger.info("Original length: {}", text.length());
+      logger.info("Restored length: {}", restoredText.length());
 
       if (!textsMatch) {
         logger.warn("Original and restored texts do not match exactly");
-        System.out.println("Normalized original: '" + normalizedOriginal + "'");
-        System.out.println("Normalized restored: '" + normalizedRestored + "'");
+        logger.info("Normalized original: '{}'", normalizedOriginal);
+        logger.info("Normalized restored: '{}'", normalizedRestored);
       }
 
       // 5. Test service methods using WordParser-based composite
       TextServiceImpl textService = new TextServiceImpl();
 
-      // В методе main замените вывод сервисных методов:
-      System.out.println("\n=== SERVICE METHODS (USING WORDPARSER COMPOSITE) ===");
+      logger.info("\n=== SERVICE METHODS (USING WORDPARSER COMPOSITE) ===");
 
       // Find max sentence count with same words
       int maxSameWords = textService.findMaxSentenceCountWithSameWords(textCompositeForService);
-      System.out.println("Max sentences with same words: " + maxSameWords);
+      logger.info("Max sentences with same words: {}", maxSameWords);
 
       // Display sentences by lexeme count
-      System.out.println("\n--- Sentences sorted by lexeme count ---");
+      logger.info("\n--- Sentences sorted by lexeme count ---");
       textService.displaySentencesByLexemeCountAscending(textCompositeForRestoration);
 
       // Change first and last lexemes
-      System.out.println("\n=== CHANGING FIRST AND LAST LEXEMES ===");
+      logger.info("\n=== CHANGING FIRST AND LAST LEXEMES ===");
       var modifiedText = textService.changeFirstAndLastLexemesInSentences(textCompositeForRestoration);
-      System.out.println("Modified text (first and last lexemes swapped in each sentence):");
-      System.out.println("=== MODIFIED TEXT ===");
-      System.out.println(modifiedText.toString());
-      System.out.println("=====================");
+      logger.info("Modified text (first and last lexemes swapped in each sentence):");
+      logger.info("=== MODIFIED TEXT ===");
+      logger.info(modifiedText.toString());
+      logger.info("=====================");
 
       logger.info("Application completed successfully");
 
     } catch (CustomTextException e) {
       logger.error("Custom text exception occurred: {}", e.getMessage(), e);
-      System.err.println("Error: " + e.getMessage());
+      logger.error("Error: {}", e.getMessage());
     } catch (Exception e) {
       logger.error("Unexpected error occurred: {}", e.getMessage(), e);
-      System.err.println("Unexpected error: " + e.getMessage());
+      logger.error("Unexpected error: {}", e.getMessage());
     }
   }
 
   private static void displayStructureInfo(TextComposite textComposite, String title) {
-    System.out.println("=== " + title + " INFO ===");
+    logger.info("=== {} INFO ===", title);
 
     int paragraphCount = 0;
     int sentenceCount = 0;
@@ -156,11 +155,11 @@ public class Main {
       }
     }
 
-    System.out.println("Paragraphs: " + paragraphCount);
-    System.out.println("Sentences: " + sentenceCount);
-    System.out.println("Lexemes: " + lexemeCount);
-    System.out.println("Words: " + wordCount);
-    System.out.println("Symbols: " + symbolCount);
-    System.out.println("============================\n");
+    logger.info("Paragraphs: {}", paragraphCount);
+    logger.info("Sentences: {}", sentenceCount);
+    logger.info("Lexemes: {}", lexemeCount);
+    logger.info("Words: {}", wordCount);
+    logger.info("Symbols: {}", symbolCount);
+    logger.info("============================\n");
   }
 }
